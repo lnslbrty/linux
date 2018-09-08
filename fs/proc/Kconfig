@@ -97,3 +97,13 @@ config PROC_CHILDREN
 
 	  Say Y if you are running any user-space software which takes benefit from
 	  this interface. For example, rkt is such a piece of software.
+
+config PROC_HIDE
+	bool "Entry hiding"
+	default n
+	depends on PROC_FS && PID_NS
+	help
+	  Enables primitive /proc entry hiding for PID namespaces.
+	  This can be useful for Linux Namespaces based Sandboxes.
+
+	  Say Y if you are using PID Namespaces and want to hide some /proc entries.

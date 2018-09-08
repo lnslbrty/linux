@@ -256,6 +256,8 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
 		inode = proc_get_inode(dir->i_sb, de);
 		if (!inode)
 			return ERR_PTR(-ENOMEM);
+		if (proc_hide_lookup(de, inode))
+			return ERR_PTR(-ENOENT);
 		d_set_d_op(dentry, &proc_misc_dentry_ops);
 		return d_splice_alias(inode, dentry);
 	}
@@ -304,8 +306,9 @@ int proc_readdir_de(struct file *file, struct dir_context *ctx,
 		struct proc_dir_entry *next;
 		pde_get(de);
 		read_unlock(&proc_subdir_lock);
-		if (!dir_emit(ctx, de->name, de->namelen,
-			    de->low_ino, de->mode >> 12)) {
+		if (!proc_hide_readdir(de, file) &&
+			!dir_emit(ctx, de->name, de->namelen,
+				de->low_ino, de->mode >> 12)) {
 			pde_put(de);
 			return 0;
 		}

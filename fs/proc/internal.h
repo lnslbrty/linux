@@ -221,6 +221,23 @@ extern const struct inode_operations proc_ns_dir_inode_operations;
 extern const struct file_operations proc_ns_dir_operations;
 
 /*
+ * proc_hide.c
+ */
+#ifdef CONFIG_PROC_HIDE
+extern int proc_hide_lookup(struct proc_dir_entry *de, struct inode *inode);
+extern int proc_hide_readdir(struct proc_dir_entry *de, struct file *file);
+#else
+static inline int proc_hide_lookup(struct proc_dir_entry *de, struct inode *inode)
+{
+    return 0;
+}
+static inline int proc_hide_readdir(struct proc_dir_entry *de, struct file *file)
+{
+	return 0;
+}
+#endif
+
+/*
  * proc_net.c
  */
 extern const struct file_operations proc_net_operations;
